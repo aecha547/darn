@@ -1,0 +1,2879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#050505" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>The Final Edition — Breaking News</title>
+<meta name="description" content="A private noir breaking-news edition about a relationship ending honestly: no scandal, no villain, no rewriting what mattered." />
+<meta name="robots" content="noindex,nofollow,noarchive" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Special+Elite&family=La+Belle+Aurore&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --paper-color: #f3ede0;
+  --paper-darker: #e7dcc6;
+  --ink-color: #161310;
+  --ink-soft: #3a342c;
+  --desk-bg: #0b0b0c;
+  --glow-color: #ff3c00;
+  --beat: 0;
+  --card-width: min(500px, 90vw);
+  --shadow-heavy: 0 28px 80px rgba(0, 0, 0, 0.7);
+  /* Synced from visualViewport in JS when available; CSS fallbacks stay valid. */
+  --vvw: 100vw;
+  --vvh: 100svh;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  height: 100%;
+  height: 100dvh;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html, body { min-height: 100%; min-height: 100dvh; }
+body {
+  background-color: var(--desk-bg);
+  background-image: radial-gradient(circle at center, #18181b 0%, #09090b 58%, #020203 100%);
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1800px;
+  overflow: hidden;
+  overscroll-behavior: none;
+  font-family: 'Playfair Display', serif;
+  color: #fff;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  padding:
+    env(safe-area-inset-top, 0px)
+    env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
+}
+button { font: inherit; }
+
+/* ============================================================
+   NOIR BACKGROUND — animated city, rain, web + descending spider
+   ============================================================ */
+.noir-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.07), transparent 24%),
+    radial-gradient(circle at 50% 64%, rgba(255, 60, 0, 0.08), transparent 36%),
+    linear-gradient(180deg, #121214 0%, #060608 56%, #000 100%);
+  filter: contrast(calc(1.04 + (var(--beat) * 0.2))) brightness(calc(0.84 + (var(--beat) * 0.16)));
+}
+.noir-svg {
+  position: absolute;
+  inset: -6% -6% -10% -6%;
+  width: 112%;
+  height: 118%;
+  opacity: calc(0.6 + (var(--beat) * 0.25));
+}
+
+/* --- searchlight sweep --- */
+.searchlight {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: lightSweep 8s ease-in-out infinite;
+  opacity: calc(0.34 + (var(--beat) * 0.5));
+  mix-blend-mode: screen;
+}
+.searchlight2 {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: lightSweep2 11s ease-in-out infinite;
+  opacity: calc(0.22 + (var(--beat) * 0.45));
+  mix-blend-mode: screen;
+}
+
+/* --- distant skyline --- */
+.city-layer {
+  fill: #020203;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1.5;
+}
+.city-window {
+  fill: rgba(255, 214, 170, 0.18);
+  animation: windowFlicker 3.7s steps(2, end) infinite;
+}
+.city-window:nth-child(odd) { animation-delay: -1.4s; }
+.city-window:nth-child(3n) { animation-delay: -2.3s; }
+.city-window:nth-child(4n) { fill: rgba(255, 60, 0, 0.16); }
+
+/* --- the web --- */
+.web-strand {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.05));
+}
+.web-spiral {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.11);
+  stroke-width: 1.1;
+  stroke-dasharray: 6 12;
+  animation: webShimmer 6s linear infinite;
+}
+
+/* --- spider rig: a thread that drops, a spider that swings on it --- */
+.spider-rig {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: rigDrop 11s ease-in-out infinite;
+}
+.spider-swing {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: rigSwing 4.4s ease-in-out infinite;
+}
+.spider-thread {
+  stroke: rgba(255, 255, 255, 0.32);
+  stroke-width: 1.5;
+}
+.spider-body {
+  fill: #050505;
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 1.3;
+  filter: drop-shadow(0 0 10px rgba(255, 60, 0, calc(0.1 + var(--beat) * 0.35)));
+}
+.spider-leg {
+  fill: none;
+  stroke: #050505;
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 1px rgba(255,255,255,0.18));
+}
+.leg-L1 { animation: legTwitchA 2.1s ease-in-out infinite; }
+.leg-L2 { animation: legTwitchA 2.1s ease-in-out infinite -0.4s; }
+.leg-L3 { animation: legTwitchB 2.4s ease-in-out infinite -0.2s; }
+.leg-L4 { animation: legTwitchB 2.4s ease-in-out infinite -0.8s; }
+.leg-R1 { animation: legTwitchA 2.1s ease-in-out infinite -1.0s; }
+.leg-R2 { animation: legTwitchA 2.1s ease-in-out infinite -1.4s; }
+.leg-R3 { animation: legTwitchB 2.4s ease-in-out infinite -1.2s; }
+.leg-R4 { animation: legTwitchB 2.4s ease-in-out infinite -0.6s; }
+.spider-leg { transform-box: fill-box; transform-origin: center; }
+.spider-eye {
+  fill: rgba(255, 60, 0, 0.9);
+  opacity: calc(0.45 + (var(--beat) * 0.55));
+}
+
+/* --- rain --- */
+.rain-layer,
+.rain-layer::before,
+.rain-layer::after {
+  position: absolute;
+  inset: -30% 0 0 0;
+  content: '';
+  background-image: repeating-linear-gradient(104deg,
+    transparent 0 28px,
+    rgba(255, 255, 255, 0.07) 29px,
+    transparent 31px 66px);
+  transform: translate3d(0, 0, 0) skewX(-12deg);
+  animation: noirRain 0.72s linear infinite;
+  opacity: 0.5;
+}
+.rain-layer::before {
+  opacity: 0.34;
+  animation-duration: 1.05s;
+  transform: translate3d(20px, 0, 0) skewX(-12deg) scale(1.25);
+}
+.rain-layer::after {
+  opacity: 0.2;
+  animation-duration: 1.45s;
+  transform: translate3d(-80px, 0, 0) skewX(-12deg) scale(1.6);
+}
+
+.film-grain {
+  position: fixed;
+  inset: -50%;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0.1;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.7) 0 1px, transparent 1px),
+    radial-gradient(circle, rgba(0,0,0,0.9) 0 1px, transparent 1px);
+  background-size: 28px 28px, 19px 19px;
+  animation: grainMove 0.65s steps(5) infinite;
+  mix-blend-mode: overlay;
+}
+.beat-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 60, 0, calc(0.02 + (var(--beat) * 0.13))), transparent 42%);
+  opacity: calc(0.25 + (var(--beat) * 0.45));
+}
+.blinds-shadow {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom,
+    rgba(0,0,0,0) 0,
+    rgba(0,0,0,0) 40px,
+    rgba(0,0,0,0.6) 44px,
+    rgba(0,0,0,0.6) 80px);
+  pointer-events: none;
+  opacity: calc(0.4 + (var(--beat) * 0.18));
+  /* Keep blinds BEHIND the newspaper so mobile photos aren't striped */
+  z-index: 4;
+  transform: translateZ(0);
+  animation: blindsDrift 6s ease-in-out infinite;
+}
+.desk-overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0) 56%, rgba(0,0,0,0.85) 100%),
+    radial-gradient(circle at center, transparent 0 40%, rgba(0,0,0,0.62) 84%);
+  pointer-events: none;
+  /* also behind the paper; vignette only frames the desk */
+  z-index: 4;
+}
+
+/* drifting fog */
+.fog {
+  position: fixed;
+  inset: -20%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 42% at 18% 72%, rgba(190,195,205,0.07), transparent 70%),
+    radial-gradient(ellipse 52% 36% at 82% 58%, rgba(190,195,205,0.06), transparent 70%),
+    radial-gradient(ellipse 70% 30% at 50% 96%, rgba(190,195,205,0.08), transparent 72%);
+  mix-blend-mode: screen;
+  animation: fogDrift 28s ease-in-out infinite alternate;
+}
+@keyframes fogDrift {
+  0%   { transform: translate3d(-3%, 0, 0) scale(1); }
+  100% { transform: translate3d(4%, -2%, 0) scale(1.1); }
+}
+
+/* distant lightning */
+.lightning {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(circle at 70% 22%, rgba(207,227,255,0.9), rgba(207,227,255,0.35) 30%, transparent 60%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: lightningFlash 16s linear infinite;
+}
+
+/* full-coverage ambient light that drifts over the whole background */
+.ambient-glow {
+  position: fixed;
+  inset: -35%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 38% at 18% 22%, rgba(255,150,70,0.12), transparent 70%),
+    radial-gradient(42% 42% at 82% 28%, rgba(120,170,255,0.10), transparent 70%),
+    radial-gradient(46% 46% at 50% 82%, rgba(255,95,35,0.12), transparent 72%),
+    radial-gradient(40% 40% at 86% 78%, rgba(200,160,255,0.09), transparent 70%),
+    radial-gradient(40% 40% at 12% 80%, rgba(255,210,160,0.08), transparent 70%);
+  mix-blend-mode: screen;
+  opacity: calc(0.45 + (var(--beat) * 0.55));
+  animation: ambientDrift 19s ease-in-out infinite alternate;
+}
+@keyframes ambientDrift {
+  0%   { transform: translate3d(-5%, -4%, 0) scale(1); }
+  50%  { transform: translate3d(4%, 3%, 0) scale(1.12) rotate(2deg); }
+  100% { transform: translate3d(-2%, 5%, 0) scale(1.06) rotate(-2deg); }
+}
+@keyframes lightningFlash {
+  0%, 88%, 100% { opacity: 0; }
+  88.6% { opacity: 0.45; }
+  89.2% { opacity: 0.08; }
+  89.9% { opacity: 0.38; }
+  90.6% { opacity: 0.02; }
+  91.1% { opacity: 0.2; }
+  91.8% { opacity: 0; }
+}
+
+@keyframes lightSweep {
+  0%, 100% { transform: rotate(-18deg); }
+  50% { transform: rotate(18deg); }
+}
+@keyframes lightSweep2 {
+  0%, 100% { transform: rotate(20deg); }
+  50% { transform: rotate(-18deg); }
+}
+@keyframes windowFlicker {
+  0%, 82%, 100% { opacity: 0.3; }
+  84%, 88% { opacity: 0.08; }
+  90%, 96% { opacity: 0.42; }
+}
+@keyframes webShimmer { to { stroke-dashoffset: -90; } }
+@keyframes rigDrop {
+  0%, 100% { transform: translate(335px, -120px); }
+  45%, 65% { transform: translate(335px, -64px); }
+}
+@keyframes rigSwing {
+  0%, 100% { transform: rotate(-9deg); }
+  50% { transform: rotate(9deg); }
+}
+@keyframes legTwitchA {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(6deg); }
+}
+@keyframes legTwitchB {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-7deg); }
+}
+@keyframes noirRain { to { background-position: 0 140px; } }
+@keyframes grainMove {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-4%, 3%); }
+  40% { transform: translate(3%, -2%); }
+  60% { transform: translate(-2%, -4%); }
+  80% { transform: translate(4%, 2%); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes blindsDrift {
+  0%, 100% { transform: translateY(-6px); }
+  50% { transform: translateY(8px); }
+}
+
+/* ============================================================
+   INTRO CRT SCREEN
+   ============================================================ */
+#intro-terminal {
+  position: fixed;
+  inset: 0;
+  background-color: #050505;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#intro-terminal.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+#static-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+  image-rendering: pixelated;
+}
+.crt-scanlines {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.breaking-box {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+}
+.breaking-tag {
+  font-family: 'Special Elite', monospace;
+  background-color: var(--glow-color);
+  color: #000;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px var(--glow-color);
+  animation: pulseGlow 1.5s infinite alternate;
+}
+.terminal-headline {
+  font-family: 'Special Elite', monospace;
+  color: #fff;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
+}
+.terminal-sub {
+  font-family: 'Special Elite', monospace;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.72rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.tune-in-btn {
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+  padding: 12px 28px;
+  font-family: 'Special Elite', monospace;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+.tune-in-btn:hover,
+.tune-in-btn:focus-visible {
+  background-color: #fff;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255,255,255,0.5);
+  transform: translateY(-1px);
+  outline: none;
+}
+@keyframes pulseGlow {
+  0% { transform: scale(1); opacity: 0.82; }
+  100% { transform: scale(1.05); opacity: 1; }
+}
+.screen-shake { animation: screenImpact 0.4s ease-out forwards; }
+@keyframes screenImpact {
+  0% { transform: translate(0, 0); }
+  15% { transform: translate(-15px, 12px) rotate(-1deg); }
+  30% { transform: translate(12px, -10px) rotate(1deg); }
+  45% { transform: translate(-8px, 6px); }
+  60% { transform: translate(5px, -4px); }
+  75% { transform: translate(-2px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ============================================================
+   FLIPBOOK NEWSPAPER
+   ============================================================ */
+.card-viewport {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  height: 100dvh;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  perspective: 2800px;
+  overflow: hidden;
+  --page-w: min(460px, 92vw);
+  --page-h: calc(var(--page-w) * 1.375);
+  --nav-space: 72px;
+}
+.card-viewport.is-visible { display: flex; }
+
+.book-throw {
+  position: relative;
+  transform-style: preserve-3d;
+  opacity: 0;
+}
+.book-throw.thrown {
+  animation: bookThrow 1.3s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+}
+@keyframes bookThrow {
+  0%   { opacity: 0; transform: translate3d(-118vw, -82vh, 0) rotate(-235deg) scale(0.42); }
+  48%  { opacity: 1; transform: translate3d(0, 0, 0) rotate(7deg) scale(1.07); }
+  64%  { transform: translate3d(0, 0, 0) rotate(-3deg) scale(0.975); }
+  80%  { transform: translate3d(0, 0, 0) rotate(1.4deg) scale(1.018); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+}
+
+.book {
+  position: relative;
+  width: calc(var(--page-w) * 2);
+  height: var(--page-h);
+  transform-style: preserve-3d;
+  transform: translateX(-25%) scale(1);
+  transition: transform 1.0s cubic-bezier(0.18, 0.72, 0.18, 1);
+  filter: drop-shadow(0 24px 50px rgba(0,0,0,0.8));
+  will-change: transform;
+}
+
+/* each physical sheet */
+.leaf {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 0.92s cubic-bezier(0.3, 0.65, 0.2, 1);
+  will-change: transform;
+}
+.leaf.turned { transform: rotateY(-180deg); }
+
+.leaf-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  border-radius: 0 2px 2px 0;
+}
+.leaf-face.back {
+  transform: rotateY(180deg);
+  border-radius: 2px 0 0 2px;
+}
+
+/* the printed paper inside each face */
+.sheet {
+  position: absolute;
+  inset: 0;
+  background-color: var(--paper-color);
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(120,95,55,0.07), transparent 9%),
+    radial-gradient(circle at 88% 72%, rgba(120,95,55,0.08), transparent 11%),
+    radial-gradient(circle at 70% 12%, rgba(120,95,55,0.05), transparent 7%),
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.45) 0%, rgba(0,0,0,0.02) 70%),
+    linear-gradient(0deg, rgba(0,0,0,0.05), transparent 6%, transparent 94%, rgba(0,0,0,0.05));
+  color: var(--ink-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(13px, 3.6vw, 22px) clamp(12px, 3.4vw, 20px);
+}
+/* spine shading: dark gutter toward the fold */
+.leaf-face.front .sheet::after,
+.leaf-face.back .sheet::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+.leaf-face.front .sheet::after {
+  background: linear-gradient(to right, rgba(40,30,12,0.22), transparent 8%);
+}
+.leaf-face.back .sheet::after {
+  background: linear-gradient(to left, rgba(40,30,12,0.22), transparent 8%);
+}
+
+/* leaf being turned rides above the rest */
+.leaf.flipping { z-index: 60 !important; }
+
+/* focus ring */
+.book:focus-visible { outline: none; }
+.book:focus-visible .leaf:not(.turned):last-of-type .sheet {
+  box-shadow: inset 0 0 0 3px rgba(255,60,0,0.5);
+}
+
+/* ---------- navigation ---------- */
+.book-nav {
+  position: fixed;
+  left: 50%;
+  bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 14px;
+  z-index: 12;
+  background: rgba(8,8,10,0.62);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: 999px;
+  /* keep clear of home indicator / browser chrome */
+  margin-bottom: 0;
+}
+.book-nav.is-visible { display: flex; }
+.nav-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.5);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+  touch-action: manipulation;
+}
+.nav-btn:hover:not(:disabled),
+.nav-btn:focus-visible:not(:disabled) {
+  background: #fff; color: #000; transform: translateY(-1px); outline: none;
+}
+.nav-btn:disabled { opacity: 0.25; cursor: default; }
+.nav-dots { display: flex; gap: 6px; }
+.nav-dots i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+.nav-dots i.on { background: var(--glow-color); transform: scale(1.25); }
+.nav-hint {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+}
+
+/* tap zones for turning by clicking page halves */
+.turn-zone {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 16%;
+  z-index: 7;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+.turn-zone.prev { left: 0; }
+.turn-zone.next { right: 0; }
+
+/* "open the file" tab on the cover */
+.file-tab-prompt {
+  position: absolute;
+  top: 36%;
+  right: -32px;
+  background-color: #b9301a;
+  color: #fff;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.68rem;
+  padding: 12px 6px;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 2px;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 3px 2px 8px rgba(0,0,0,0.45);
+  z-index: 8;
+  animation: subtleSlide 1.5s infinite alternate;
+}
+.book.opened .file-tab-prompt { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+@keyframes subtleSlide { 0% { transform: translateX(0); } 100% { transform: translateX(4px); } }
+
+/* ---------- reusable evidence bits on back pages ---------- */
+.redact-lines { display: flex; flex-direction: column; gap: 6px; }
+.redact-lines span { display: block; height: 5px; background: rgba(0,0,0,0.16); border-radius: 1px; }
+.redact-lines span:nth-child(4n) { width: 62%; }
+.redact-lines span.black { background: rgba(0,0,0,0.82); width: 78%; height: 7px; }
+.fingerprint { width: 58px; height: 74px; opacity: 0.5; }
+.fingerprint path { fill: none; stroke: var(--ink-soft); stroke-width: 1.1; }
+
+/* --- masthead --- */
+.masthead {
+  text-align: center;
+  border-bottom: 3px double var(--ink-color);
+  padding-bottom: 5px;
+  margin-bottom: 8px;
+  flex: 0 0 auto;
+}
+.masthead-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Special Elite', monospace;
+  font-size: clamp(0.5rem, 1.7vw, 0.62rem);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--ink-color);
+  padding-bottom: 3px;
+  margin-bottom: 4px;
+  color: var(--ink-soft);
+}
+.newspaper-title {
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: clamp(2.3rem, 9vw, 3.4rem);
+  color: var(--ink-color);
+  line-height: 0.95;
+  letter-spacing: -1px;
+  margin: 2px 0 6px;
+  white-space: nowrap;
+}
+.metadata-bar {
+  border-top: 1px solid var(--ink-color);
+  border-bottom: 1px solid var(--ink-color);
+  padding: 3px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: 'Special Elite', monospace;
+  font-size: clamp(0.52rem, 1.8vw, 0.66rem);
+  color: var(--ink-color);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* --- headline --- */
+.headline-section {
+  text-align: center;
+  margin: 8px 0 6px;
+  flex: 0 0 auto;
+}
+.kicker {
+  font-family: 'Special Elite', monospace;
+  font-size: clamp(0.56rem, 1.9vw, 0.7rem);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--glow-color);
+  margin-bottom: 4px;
+}
+.headline {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(1.5rem, 5.6vw, 2.05rem);
+  line-height: 1.02;
+  text-transform: uppercase;
+  color: var(--ink-color);
+  letter-spacing: -0.5px;
+}
+.subhead {
+  font-family: 'Old Standard TT', serif;
+  font-style: italic;
+  font-size: clamp(0.74rem, 2.4vw, 0.92rem);
+  color: var(--ink-soft);
+  margin-top: 5px;
+  border-bottom: 1px solid var(--ink-color);
+  padding-bottom: 7px;
+}
+
+/* --- photo + lead column area --- */
+.story-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 8px;
+}
+.photo-frame {
+  position: relative;
+  border: 1px solid #bdb6a4;
+  padding: 7px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.photo-plate {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 180px;
+  overflow: hidden;
+  background: #f3ede0; /* paper tone so letterboxing matches print */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-plate img {
+  width: 100%;
+  height: 100%;
+  /* full portrait visible where layout permits; editorial crops are used on mobile */
+  object-fit: contain;
+  object-position: center center;
+  /* pencil sketch already mono — light newsprint polish only */
+  filter: grayscale(8%) contrast(1.06) brightness(1.02) sepia(4%);
+  display: block;
+}
+/* CSS halftone: fine ink-dot screen multiplied over the photo */
+.halftone {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+  background-image: radial-gradient(circle at center, rgba(0,0,0,0.95) 0.5px, transparent 1.35px);
+  background-size: 3px 3px;
+}
+.photo-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 38%, transparent 42%, rgba(0,0,0,0.32) 100%);
+  box-shadow: inset 0 0 26px rgba(0,0,0,0.28);
+}
+.photo-frame.is-missing .photo-plate { display: none; }
+.photo-fallback {
+  display: none;
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background:
+    repeating-linear-gradient(45deg, #d8d0bd 0 6px, #cfc6b1 6px 12px);
+  color: var(--ink-soft);
+  font-family: 'Special Elite', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 16px;
+}
+.photo-frame.is-missing .photo-fallback { display: flex; }
+.photo-caption {
+  font-family: 'Special Elite', monospace;
+  font-size: clamp(0.5rem, 1.7vw, 0.6rem);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-soft);
+  margin-top: 5px;
+  line-height: 1.25;
+}
+
+.lead-column {
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.66rem, 2.1vw, 0.78rem);
+  line-height: 1.4;
+  color: var(--ink-color);
+  text-align: justify;
+  hyphens: auto;
+  overflow: hidden;
+}
+.lead-column .byline {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 1px solid rgba(0,0,0,0.25);
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+}
+.lead-column p { margin-bottom: 5px; }
+.lead-column .dropcap::first-letter {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 2.6em;
+  float: left;
+  line-height: 0.78;
+  padding: 3px 5px 0 0;
+}
+
+/* --- bottom strip: weather / classifieds --- */
+.bottom-strip {
+  display: flex;
+  gap: 10px;
+  border-top: 2px solid var(--ink-color);
+  margin-top: 8px;
+  padding-top: 6px;
+  flex: 0 0 auto;
+}
+.brief {
+  flex: 1;
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.56rem, 1.8vw, 0.66rem);
+  line-height: 1.3;
+  color: var(--ink-color);
+}
+.brief + .brief { border-left: 1px solid rgba(0,0,0,0.3); padding-left: 10px; }
+.brief h4 {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  border-bottom: 1px solid var(--ink-color);
+  padding-bottom: 2px;
+}
+.continued {
+  text-align: center;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--glow-color);
+  margin-top: 6px;
+}
+
+/* --- the inner note --- */
+.note-stamp {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--glow-color);
+  border: 1px solid var(--glow-color);
+  padding: 4px 12px;
+  transform: rotate(-3deg);
+  margin-bottom: 18px;
+}
+.note-headline {
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  color: var(--ink-color);
+  text-align: center;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+.note-rule {
+  width: 60%;
+  border: none;
+  border-top: 2px solid var(--ink-color);
+  border-bottom: 1px solid var(--ink-color);
+  height: 4px;
+  margin: 0 auto 18px;
+}
+.inner-message {
+  font-family: 'La Belle Aurore', cursive;
+  font-size: clamp(1.2rem, 4.6vw, 1.7rem);
+  line-height: 1.5;
+  color: #161310;
+  text-align: center;
+  max-width: 340px;
+}
+.inner-message .accent { color: var(--glow-color); }
+.note-sign {
+  font-family: 'Old Standard TT', serif;
+  font-style: italic;
+  font-size: clamp(0.82rem, 2.6vw, 1rem);
+  color: var(--ink-soft);
+  margin-top: 14px;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- case file / dossier ---------- */
+.dossier {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--ink-color);
+}
+.dossier-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.dossier-stamp {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--glow-color);
+  border: 2px solid var(--glow-color);
+  padding: 3px 10px;
+  transform: rotate(-3deg);
+  border-radius: 2px;
+}
+.dossier-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.dossier-title {
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: clamp(1.7rem, 6.5vw, 2.3rem);
+  line-height: 1;
+  text-align: center;
+  margin-top: 2px;
+}
+.dossier-sub {
+  font-family: 'Old Standard TT', serif;
+  font-style: italic;
+  text-align: center;
+  font-size: clamp(0.7rem, 2.3vw, 0.84rem);
+  color: var(--ink-soft);
+}
+.record { display: flex; flex-direction: column; gap: 5px; }
+.record-label {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-color);
+  border-bottom: 1px solid var(--ink-color);
+  padding-bottom: 2px;
+}
+.record-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  row-gap: 3px;
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.64rem, 2.1vw, 0.76rem);
+  line-height: 1.3;
+}
+.record-grid dt {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  padding-top: 1px;
+}
+.record-grid dd { margin: 0; }
+.charge-list {
+  list-style: none;
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.64rem, 2.1vw, 0.76rem);
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.charge-list li { position: relative; padding-left: 16px; }
+.charge-list li::before {
+  content: '§';
+  position: absolute;
+  left: 0;
+  color: var(--glow-color);
+  font-weight: bold;
+}
+.evidence-map {
+  border: 1px solid #bdb6a4;
+  background: #fff;
+  padding: 4px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+.evidence-map svg { width: 100%; height: auto; display: block; max-height: 116px; }
+.map-route {
+  stroke-dasharray: 5 5;
+  animation: routeDraw 4s linear infinite;
+}
+@keyframes routeDraw { to { stroke-dashoffset: -100; } }
+.map-pin circle {
+  fill: #b9301a;
+  stroke: #fff;
+  stroke-width: 1.2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pinPulse 2.4s ease-in-out infinite;
+}
+.map-pin:nth-child(3) circle { animation-delay: -0.6s; }
+.map-pin:nth-child(4) circle { animation-delay: -1.2s; }
+.map-pin.last circle { fill: #1a1a1a; animation-delay: -1.8s; }
+.map-pin text {
+  fill: #fff;
+  font-family: 'Special Elite', monospace;
+  font-size: 6px;
+  text-anchor: middle;
+}
+@keyframes pinPulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.35); opacity: 1; }
+}
+.sighting-log {
+  list-style: none;
+  counter-reset: none;
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.62rem, 2vw, 0.74rem);
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 5px;
+}
+.sighting-log b { font-family: 'Special Elite', monospace; font-size: 0.62rem; }
+.warning-box {
+  border: 1px dashed var(--glow-color);
+  background: rgba(185, 48, 26, 0.06);
+  padding: 9px 11px;
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.64rem, 2.1vw, 0.76rem);
+  line-height: 1.35;
+  position: relative;
+}
+.warning-tag {
+  display: block;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--glow-color);
+  margin-bottom: 3px;
+}
+.detective-note { margin-top: 4px; text-align: center; }
+.detective-note .record-label { text-align: left; }
+.detective-note .inner-message {
+  font-size: clamp(1.05rem, 4vw, 1.45rem);
+  line-height: 1.45;
+  margin: 8px auto 0;
+}
+
+/* ============================================================
+   INNER PAGE TYPES
+   ============================================================ */
+.mini-masthead {
+  text-align: center;
+  border-bottom: 2px solid var(--ink-color);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+  flex: 0 0 auto;
+}
+.mini-masthead .mm-title {
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: clamp(1.1rem, 4.4vw, 1.5rem);
+  line-height: 1;
+}
+.mini-masthead .mm-line {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Special Elite', monospace;
+  font-size: clamp(0.46rem, 1.6vw, 0.56rem);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--ink-color);
+  margin-top: 3px;
+  padding-top: 2px;
+}
+.page-fill { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+
+/* two-column continuation body */
+.cont-cols {
+  columns: 2;
+  column-gap: 12px;
+  column-rule: 1px solid rgba(0,0,0,0.2);
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.62rem, 2vw, 0.74rem);
+  line-height: 1.4;
+  text-align: justify;
+  hyphens: auto;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.cont-cols p { margin-bottom: 6px; break-inside: avoid; }
+.cont-cols .subentry {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--glow-color);
+  display: block;
+  margin: 4px 0 2px;
+}
+
+/* pull quote */
+.quote-box {
+  border-top: 2px solid var(--ink-color);
+  border-bottom: 2px solid var(--ink-color);
+  padding: 8px 6px;
+  margin: 8px 0;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(0.82rem, 3vw, 1rem);
+  line-height: 1.3;
+  text-align: center;
+}
+.quote-box cite {
+  display: block;
+  font-family: 'Special Elite', monospace;
+  font-style: normal;
+  font-size: 0.56rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 5px;
+}
+
+/* mischief desk meme frame reuses .photo-frame/.photo-plate */
+.mischief-caption {
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.62rem, 2vw, 0.74rem);
+  line-height: 1.38;
+  text-align: justify;
+  margin-top: 6px;
+}
+
+/* editorial / personal note */
+.editorial { justify-content: center; align-items: center; text-align: center; }
+.editorial .inner-message {
+  font-family: 'La Belle Aurore', cursive;
+  font-size: clamp(1.1rem, 4.4vw, 1.55rem);
+  line-height: 1.5;
+  color: #161310;
+  max-width: 92%;
+  margin: 6px auto 0;
+}
+.editorial .inner-message .accent { color: var(--glow-color); }
+
+/* back page coupon + colophon */
+.backcover { justify-content: space-between; }
+.coupon {
+  border: 2px dashed var(--ink-color);
+  padding: 12px;
+  text-align: center;
+  position: relative;
+  margin: 6px 0;
+}
+.coupon .coupon-tag {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--glow-color);
+}
+.coupon .coupon-amt {
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
+  line-height: 1.05;
+  margin: 4px 0;
+}
+.coupon .coupon-fine {
+  font-family: 'Old Standard TT', serif;
+  font-style: italic;
+  font-size: 0.6rem;
+  color: var(--ink-soft);
+}
+.colophon {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: center;
+  line-height: 1.5;
+  border-top: 1px solid var(--ink-color);
+  padding-top: 6px;
+}
+.end-stamp {
+  align-self: center;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--glow-color);
+  border: 2px solid var(--glow-color);
+  padding: 4px 14px;
+  transform: rotate(-4deg);
+  margin: 6px 0;
+}
+
+.paper-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0 1px, transparent 1px 3px),
+    radial-gradient(circle at 20% 20%, rgba(0,0,0,0.03), transparent 20%),
+    radial-gradient(circle at 80% 75%, rgba(0,0,0,0.045), transparent 22%);
+  mix-blend-mode: multiply;
+}
+
+
+/* ============================================================
+   THIS EDITION — legal / evidence layouts
+   ============================================================ */
+.tiny-parenthetical { opacity: 0.74; font-size: 0.88em; }
+.cover-photo-plate { min-height: 184px; aspect-ratio: 857 / 450; }
+.cover-photo-plate img,
+.evidence-photo-plate img {
+  object-fit: cover;
+  object-position: center 42%;
+  filter: contrast(1.04) brightness(0.98) saturate(0.78) sepia(8%);
+}
+.cover-photo .photo-vignette { background: radial-gradient(circle at 46% 36%, transparent 36%, rgba(0,0,0,0.35) 100%); }
+.cover-story-grid { grid-template-columns: 1.28fr 0.92fr; }
+
+.legal-dossier { gap: 6px; }
+.legal-counts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  counter-reset: legal-count;
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.59rem, 1.95vw, 0.71rem);
+  line-height: 1.25;
+}
+.legal-counts li {
+  border-left: 2px solid rgba(185,48,26,0.65);
+  padding: 3px 0 3px 8px;
+}
+.legal-counts b {
+  display: block;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.92em;
+  letter-spacing: 0.1px;
+  margin-bottom: 1px;
+}
+.legal-counts span { color: var(--ink-soft); }
+.evidentiary-note { margin-top: 1px; }
+
+.evidence-sheet { gap: 0; }
+.evidence-headline { margin: 4px 0 6px; }
+.evidence-headline .headline { font-size: clamp(1.12rem, 4.2vw, 1.5rem); }
+.evidence-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  min-height: 0;
+  flex: 0 1 auto;
+}
+.evidence-card { padding: 5px; min-width: 0; }
+.evidence-photo-plate { min-height: 112px; aspect-ratio: 1.78 / 1; flex: 0 0 auto; }
+.evidence-card .photo-caption {
+  font-size: clamp(0.49rem, 1.55vw, 0.58rem);
+  line-height: 1.23;
+  margin-top: 4px;
+}
+.evidence-card-dark .evidence-photo-plate img { filter: grayscale(0.98) contrast(1.12) brightness(0.78); }
+.forensic-findings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-top: 6px;
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.5rem, 1.65vw, 0.61rem);
+  line-height: 1.25;
+}
+.forensic-findings span {
+  border-top: 1px solid rgba(0,0,0,0.35);
+  padding-top: 4px;
+}
+.forensic-findings b {
+  display: block;
+  font-family: 'Special Elite', monospace;
+  font-size: 0.88em;
+  text-transform: uppercase;
+  color: var(--glow-color);
+  margin-bottom: 2px;
+}
+.evidence-quote { margin-top: 6px; margin-bottom: 0; padding: 6px 5px; }
+
+.sentencing-sheet { justify-content: flex-start; text-align: left; }
+.memo-advisory { margin: 7px 0 8px; }
+.sentencing-copy {
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.71rem, 2.35vw, 0.86rem);
+  line-height: 1.46;
+  color: var(--ink-color);
+}
+.sentencing-copy p { margin-bottom: 8px; }
+.sentencing-copy p:first-child::first-letter {
+  float: left;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8em;
+  line-height: 0.82;
+  margin: 5px 5px 0 0;
+  font-weight: 900;
+}
+.sentencing-copy .memo-closing {
+  border-top: 2px solid var(--ink-color);
+  border-bottom: 1px solid var(--ink-color);
+  padding: 7px 4px;
+  font-style: italic;
+  text-align: center;
+  margin-top: 2px;
+}
+.memo-sign { align-self: flex-end; margin-top: auto; }
+
+.judgment-sheet { gap: 7px; }
+.judgment-box {
+  border: 3px double var(--ink-color);
+  padding: 12px 10px;
+  text-align: center;
+  margin: 2px 0 4px;
+  background: rgba(255,255,255,0.13);
+}
+.judgment-kicker {
+  font-family: 'Special Elite', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.judgment-word {
+  font-family: 'UnifrakturMaguntia', serif;
+  font-size: clamp(2.6rem, 9vw, 3.8rem);
+  line-height: 0.95;
+  color: var(--glow-color);
+  transform: rotate(-2deg);
+  margin: 5px 0 2px;
+}
+.judgment-sub {
+  font-family: 'Old Standard TT', serif;
+  font-style: italic;
+  font-size: 0.7rem;
+}
+.judgment-rule { border-top: 1px solid var(--ink-color); margin: 8px auto; width: 72%; }
+.judgment-box p {
+  font-family: 'Old Standard TT', serif;
+  font-size: clamp(0.68rem, 2.2vw, 0.8rem);
+  line-height: 1.35;
+}
+.pardon-coupon { margin: 2px 0; padding: 10px; }
+
+.sound-toggle {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top, 0px));
+  right: max(12px, env(safe-area-inset-right, 0px));
+  z-index: 15;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.42);
+  background: rgba(8,8,10,0.62);
+  color: #fff;
+  display: none;
+  place-items: center;
+  font-family: 'Special Elite', monospace;
+  font-size: 1rem;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  touch-action: manipulation;
+}
+.sound-toggle.is-visible { display: grid; }
+.sound-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+@media (max-width: 760px), (max-height: 520px) {
+  .cover-story-grid { grid-template-columns: 1fr; }
+  .cover-photo-plate { min-height: 144px; aspect-ratio: 857 / 450; }
+  .cover-story-grid .lead-column { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .cover-story-grid .lead-column .byline { grid-column: 1 / -1; }
+  .cover-story-grid .lead-column p { margin: 0; }
+  .cover-story-grid .dropcap::first-letter { font-size: 2.35em; }
+
+  .legal-counts { font-size: clamp(0.58rem, 2.8vw, 0.7rem); gap: 3px; }
+  .legal-counts li { padding-top: 2px; padding-bottom: 2px; }
+  .evidence-pair { grid-template-columns: 1fr; gap: 5px; }
+  .evidence-card { display: grid; grid-template-columns: 0.94fr 1.06fr; gap: 6px; align-items: stretch; }
+  .evidence-photo-plate { min-height: 92px; aspect-ratio: 1.78 / 1; }
+  .evidence-card .photo-caption { margin-top: 0; display: flex; align-items: center; }
+  .forensic-findings { gap: 4px; }
+  .evidence-quote { font-size: clamp(0.68rem, 3vw, 0.82rem); }
+  .sentencing-copy { font-size: clamp(0.67rem, 3.05vw, 0.79rem); line-height: 1.4; }
+  .sentencing-copy p { margin-bottom: 6px; }
+  .judgment-box { padding: 9px 8px; }
+  .pardon-coupon .coupon-amt { font-size: clamp(1rem, 5.4vw, 1.35rem); }
+  .sound-toggle { width: 40px; height: 40px; }
+}
+
+@media (max-width: 390px) and (min-height: 650px) {
+  .cover-story-grid .lead-column { grid-template-columns: 1fr; }
+  .cover-story-grid .lead-column .byline { grid-column: auto; }
+  .evidence-headline .headline { font-size: 1.03rem; }
+  .forensic-findings { font-size: 0.48rem; }
+  .sentencing-copy { font-size: 0.64rem; }
+}
+
+/* ============================================================
+   MOBILE / NARROW VIEWPORTS
+   Single-page flip mode is driven in JS at max-width: 760px.
+   These rules make type, layout, and chrome fit a phone page.
+   ============================================================ */
+/* Scroll lock whenever JS is in single-page mode (phones + short landscape) */
+html.is-single-page,
+html.is-single-page body {
+  overflow: hidden;
+  overscroll-behavior: none;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  touch-action: manipulation;
+}
+
+@media (max-width: 760px) {
+  .card-viewport {
+    /* page nearly fills width; height capped so nav + chrome fit */
+    --page-w: min(420px, calc(var(--vvw, 100vw) - 16px));
+    --page-h: min(
+      calc(var(--page-w) * 1.42),
+      calc(var(--vvh, 100svh) - var(--nav-space) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 8px)
+    );
+    --nav-space: 88px;
+    height: var(--vvh, 100svh);
+    max-height: 100dvh;
+    width: 100%;
+    max-width: 100vw;
+    align-items: center;
+    justify-content: center;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: calc(var(--nav-space) * 0.35);
+    overflow: hidden;
+  }
+
+  .book-throw {
+    overflow: visible;
+  }
+
+  .book {
+    /* crisper paint on iOS during scale transforms */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform-origin: center center;
+  }
+
+  .sheet {
+    padding: 11px 10px 10px;
+  }
+
+  /* Masthead is allowed to wrap on narrow phones */
+  .newspaper-title {
+    white-space: normal;
+    font-size: clamp(1.55rem, 10.5vw, 2.35rem);
+    letter-spacing: -0.5px;
+    line-height: 0.95;
+    margin: 2px 0 4px;
+  }
+
+  .masthead {
+    padding-bottom: 4px;
+    margin-bottom: 5px;
+  }
+  .masthead-top {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px 8px;
+    font-size: 0.46rem;
+    letter-spacing: 0.5px;
+  }
+  .masthead-top span:nth-child(2) {
+    order: -1;
+    width: 100%;
+    text-align: center;
+  }
+  .metadata-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px 6px;
+    font-size: 0.46rem;
+    letter-spacing: 0.4px;
+  }
+
+  .headline-section { margin: 5px 0 4px; }
+  .kicker { font-size: 0.52rem; letter-spacing: 2px; margin-bottom: 3px; }
+  .headline {
+    font-size: clamp(1.05rem, 5.8vw, 1.45rem);
+    line-height: 1.05;
+  }
+  .subhead {
+    font-size: clamp(0.68rem, 2.8vw, 0.82rem);
+    margin-top: 4px;
+    padding-bottom: 5px;
+  }
+
+  /* Stack photo + copy so the portrait isn't a tiny column */
+  .story-grid {
+    grid-template-columns: 1fr;
+    gap: 7px;
+    margin-top: 5px;
+  }
+  .story-grid .photo-frame {
+    max-height: none;
+    min-height: 0;
+  }
+  .story-grid .photo-plate {
+    min-height: 0;
+    /* taller portrait slot so the subject remains readable */
+    height: min(42svh, 260px);
+    aspect-ratio: 900 / 1424;
+    max-height: 42svh;
+    margin: 0 auto;
+    width: min(100%, 240px);
+  }
+  .photo-caption {
+    font-size: 0.48rem;
+    margin-top: 4px;
+    line-height: 1.2;
+  }
+  .lead-column {
+    font-size: clamp(0.68rem, 2.6vw, 0.8rem);
+    line-height: 1.38;
+    overflow: visible;
+  }
+  .lead-column .byline { font-size: 0.54rem; }
+  .lead-column .dropcap::first-letter {
+    font-size: 2.2em;
+    padding: 2px 4px 0 0;
+  }
+
+  .bottom-strip {
+    gap: 8px;
+    margin-top: 6px;
+    padding-top: 5px;
+  }
+  .brief { font-size: 0.56rem; line-height: 1.28; }
+  .brief h4 { font-size: 0.54rem; }
+  .brief + .brief { padding-left: 8px; }
+  .continued { font-size: 0.52rem; margin-top: 4px; }
+
+  /* Inner pages: single column body text */
+  .cont-cols {
+    columns: 1;
+    column-rule: none;
+    font-size: clamp(0.68rem, 2.6vw, 0.8rem);
+    line-height: 1.42;
+    overflow: visible;
+  }
+  .quote-box {
+    font-size: clamp(0.78rem, 3.2vw, 0.95rem);
+    padding: 7px 5px;
+    margin: 6px 0;
+  }
+  .quote-box cite { font-size: 0.52rem; }
+
+  /* Dossier denser packing so it doesn't clip */
+  .dossier { gap: 5px; }
+  .dossier-title {
+    font-size: clamp(1.25rem, 6.2vw, 1.7rem);
+    white-space: normal;
+  }
+  .dossier-sub { font-size: 0.68rem; }
+  .dossier-stamp { font-size: 0.56rem; padding: 2px 8px; }
+  .dossier-meta { font-size: 0.5rem; }
+  .record { gap: 3px; }
+  .record-label { font-size: 0.55rem; }
+  .record-grid {
+    font-size: 0.66rem;
+    column-gap: 8px;
+    row-gap: 2px;
+  }
+  .record-grid dt { font-size: 0.5rem; white-space: normal; }
+  .charge-list { font-size: 0.66rem; gap: 2px; }
+  .evidence-map svg { max-height: 88px; }
+  .sighting-log { font-size: 0.62rem; gap: 1px; }
+  .sighting-log b { font-size: 0.56rem; }
+
+  /* Mischief / photo page */
+  .mischief-caption {
+    font-size: 0.66rem;
+    line-height: 1.35;
+    margin-top: 5px;
+  }
+  #photoFrame2 {
+    max-height: none !important;
+  }
+  #photoFrame2 .photo-plate {
+    min-height: 0 !important;
+    height: min(40svh, 240px) !important;
+    max-height: 40svh !important;
+    aspect-ratio: 900 / 1424;
+    width: min(100%, 220px);
+    margin: 0 auto;
+  }
+
+  /* Editorial */
+  .editorial .inner-message {
+    font-size: clamp(1rem, 4.6vw, 1.35rem);
+    line-height: 1.45;
+    max-width: 96%;
+  }
+  .warning-box { padding: 7px 9px; font-size: 0.66rem; }
+  .note-sign { font-size: 0.78rem; margin-top: 10px; }
+
+  /* Back cover */
+  .coupon { padding: 10px; }
+  .coupon .coupon-amt { font-size: clamp(1.1rem, 5.5vw, 1.5rem); }
+  .coupon .coupon-fine { font-size: 0.58rem; }
+  .colophon { font-size: 0.48rem; }
+  .end-stamp { font-size: 0.58rem; letter-spacing: 2px; padding: 3px 10px; }
+
+  /* Nav buttons replace the side tab on phones */
+  .file-tab-prompt { display: none !important; }
+
+  /* Nav chrome: 44px+ targets (Apple HIG) */
+  .book-nav {
+    bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    gap: 16px;
+    padding: 8px 14px calc(8px + env(safe-area-inset-bottom, 0px) * 0.15);
+  }
+  .nav-btn {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    min-height: 46px;
+    font-size: 1.25rem;
+  }
+  .nav-dots { gap: 7px; }
+  .nav-dots i { width: 8px; height: 8px; }
+
+  /* Lighter ambient cost on phones */
+  .film-grain { opacity: 0.05; }
+  .blinds-shadow { opacity: 0.28; }
+
+  .breaking-box { padding: 16px; gap: 14px; max-width: min(100%, 22rem); }
+  .terminal-headline { font-size: clamp(0.95rem, 4.5vw, 1.25rem); letter-spacing: 1.5px; }
+  .terminal-sub { font-size: 0.62rem; letter-spacing: 1.5px; text-align: center; padding: 0 8px; }
+  .tune-in-btn {
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    min-height: 48px;
+    width: min(100%, 280px);
+  }
+  .breaking-tag { font-size: 0.78rem; padding: 6px 12px; }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .card-viewport {
+    --page-w: calc(var(--vvw, 100vw) - 12px);
+    --page-h: min(calc(var(--page-w) * 1.4), calc(var(--vvh, 100svh) - 96px));
+  }
+  .newspaper-title { font-size: 1.4rem; }
+  .headline { font-size: 1.02rem; }
+  .story-grid .photo-plate {
+    height: min(32svh, 180px);
+    max-height: 32svh;
+    width: min(100%, 160px);
+  }
+  .dossier-title { font-size: 1.15rem; }
+  .sheet { padding: 9px 8px; }
+}
+
+/* Landscape phones — single page, max height, side-by-side photo/copy */
+@media (orientation: landscape) and (max-height: 520px) {
+  .card-viewport {
+    /* Height-first: fill the short axis, derive width from newspaper ratio */
+    --page-h: min(calc(var(--vvh, 100svh) - 48px), 360px);
+    --page-w: min(calc(var(--page-h) / 1.32), calc(var(--vvw, 100vw) - 120px), 420px);
+    --nav-space: 52px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+  }
+  .story-grid {
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 6px;
+  }
+  .story-grid .photo-plate {
+    height: auto;
+    max-height: none;
+    width: 100%;
+    min-height: 70px;
+    aspect-ratio: 3 / 4;
+  }
+  .newspaper-title {
+    font-size: clamp(1.1rem, 4.5vh, 1.55rem);
+    white-space: nowrap;
+  }
+  .headline { font-size: clamp(0.85rem, 3.2vh, 1.05rem); }
+  .subhead { font-size: 0.6rem; }
+  .lead-column { font-size: 0.58rem; }
+  .bottom-strip { display: none; }
+  .continued { display: none; }
+  .dossier-title { font-size: 1.05rem; }
+  .evidence-map { display: none; }
+  .book-nav {
+    /* Dock nav to the side so it doesn't steal vertical space */
+    left: auto;
+    right: max(10px, env(safe-area-inset-right, 0px));
+    bottom: 50%;
+    transform: translateY(50%);
+    flex-direction: column;
+    padding: 10px 8px;
+    gap: 10px;
+  }
+  .nav-btn { width: 40px; height: 40px; min-width: 40px; min-height: 40px; font-size: 1.05rem; }
+  .nav-dots { flex-direction: column; }
+  .file-tab-prompt { display: none !important; }
+  .editorial .inner-message { font-size: 0.9rem; line-height: 1.3; }
+  #photoFrame2 .photo-plate {
+    height: min(28svh, 140px) !important;
+    max-height: 28svh !important;
+    width: min(100%, 110px) !important;
+  }
+}
+
+/* ============================================================
+   MOBILE MEDIA STABILITY PATCH v4
+   - Images size from the page WIDTH, never from viewport height.
+   - Printed pages can scroll internally on short phones instead of
+     compressing media or letting blocks collide.
+   - Captions always participate in normal flow below their image.
+   ============================================================ */
+@media (max-width: 760px), (max-height: 520px) {
+  /* A fixed flipbook face is still used for the physical-page illusion,
+     but its CONTENT may scroll. This prevents browser chrome / short phone
+     heights from forcing the photograph to collapse. */
+  .sheet {
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    touch-action: pan-y;
+    scroll-padding-bottom: 18px;
+  }
+  .sheet::-webkit-scrollbar { display: none; }
+
+  /* Every major content block is a real flow item. None may be sacrificed
+     by the parent flex column simply because the viewport is short. */
+  .sheet > *,
+  .story-grid,
+  .cover-story-grid,
+  .photo-frame,
+  .photo-plate,
+  .evidence-pair,
+  .evidence-card,
+  .forensic-findings,
+  .evidence-quote,
+  .bottom-strip,
+  .continued {
+    min-width: 0;
+    flex-shrink: 0;
+  }
+
+  /* COVER: a 4:3 editorial crop makes the portrait materially larger on
+     320–430px phones while remaining fully responsive. */
+  .cover-story-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-height: auto;
+    flex: 0 0 auto;
+  }
+  .cover-story-grid .cover-photo {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 0 0 auto;
+    padding: 5px;
+    overflow: hidden;
+  }
+  .cover-story-grid .cover-photo-plate {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 4 / 3 !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+  .cover-story-grid .cover-photo-plate img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 42% 42%;
+  }
+  .cover-story-grid .cover-photo .photo-caption {
+    position: static;
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    overflow-wrap: anywhere;
+  }
+  .cover-story-grid .lead-column {
+    min-height: 0;
+    overflow: visible;
+  }
+
+  /* EVIDENCE: one card per row. The old half-image/half-caption grid was
+     especially fragile at 320–360px and could visually collide after the
+     whole book was scaled. Normal-flow stacking removes that failure mode. */
+  .evidence-pair {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 9px;
+    min-height: auto;
+    flex: 0 0 auto;
+  }
+  .evidence-card {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 5px;
+    overflow: hidden;
+  }
+  #photoFrame2 .evidence-photo-plate,
+  #photoFrame3 .evidence-photo-plate {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 4 / 3 !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+  }
+  #photoFrame2 .evidence-photo-plate img,
+  #photoFrame3 .evidence-photo-plate img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 42%;
+  }
+  #photoFrame3 .evidence-photo-plate img { object-position: 43% 45%; }
+  .evidence-card .photo-caption {
+    position: static !important;
+    display: block !important;
+    flex: 0 0 auto;
+    margin-top: 5px;
+    min-width: 0;
+    width: 100%;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    align-self: auto;
+  }
+
+  /* Keep the ink treatment legible after enlarging the photographs. */
+  .photo-plate .halftone { opacity: 0.42; }
+}
+
+/* On the narrowest portrait phones, keep the same 4:3 geometry rather than
+   dropping to a fixed 160–180px media slot. Width is the stable dimension. */
+@media (max-width: 380px) and (orientation: portrait) {
+  .cover-story-grid .cover-photo-plate,
+  #photoFrame2 .evidence-photo-plate,
+  #photoFrame3 .evidence-photo-plate {
+    aspect-ratio: 4 / 3 !important;
+  }
+  .photo-plate .halftone { opacity: 0.36; }
+}
+
+/* Short landscape phones still get stable media, but a slightly wider crop
+   avoids making the internal page scroll unnecessarily long. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .cover-story-grid .cover-photo-plate,
+  #photoFrame2 .evidence-photo-plate,
+  #photoFrame3 .evidence-photo-plate {
+    aspect-ratio: 3 / 2 !important;
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE MEDIA SYSTEM v5
+   Root cause fixed:
+   1) Mobile pages are already sized in real CSS pixels, so JS must not
+      scale the whole newspaper down again to satisfy viewport height.
+   2) Photo height is tied to the rendered PAPER width, not svh/vh.
+   3) Evidence cards always use normal block flow in single-page mode.
+
+   This is deliberately keyed to .is-single-page (the actual interaction
+   mode) rather than only a viewport breakpoint. That keeps short landscape
+   phones and unusual webviews consistent too.
+   ============================================================ */
+html.is-single-page .card-viewport {
+  /* Use the visible phone area as the page window. Overflow belongs inside
+     the paper, not in a transform that miniaturises the entire layout. */
+  --page-w: min(430px, calc(var(--vvw, 100vw) - 12px));
+  --page-h: calc(
+    var(--vvh, 100dvh)
+    - var(--nav-space, 88px)
+    - env(safe-area-inset-top, 0px)
+    - env(safe-area-inset-bottom, 0px)
+    - 8px
+  );
+}
+
+html.is-single-page .sheet {
+  /* Modern responsive-media anchor: children can use cqi so their height
+     follows the ACTUAL paper width instead of the outer viewport height. */
+  container-type: inline-size;
+  container-name: newspaper-page;
+  min-height: 0;
+  overflow-x: clip;
+  overflow-y: auto;
+}
+
+html.is-single-page .story-grid,
+html.is-single-page .cover-story-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+html.is-single-page .cover-photo,
+html.is-single-page .evidence-card {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Fallback first: viewport width. cqi below replaces this in modern browsers. */
+html.is-single-page .cover-story-grid .cover-photo-plate {
+  inline-size: 100% !important;
+  block-size: clamp(188px, 60vw, 258px) !important;
+  min-block-size: 188px !important;
+  max-block-size: 258px !important;
+  aspect-ratio: auto !important;
+  flex: none !important;
+  margin: 0 !important;
+}
+
+html.is-single-page .evidence-pair {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 10px !important;
+  min-height: auto !important;
+  overflow: visible !important;
+}
+
+html.is-single-page .evidence-card {
+  /* Never return to the fragile image-left / caption-right layout. */
+  display: block !important;
+  height: auto !important;
+  max-height: none !important;
+  align-items: initial !important;
+}
+
+html.is-single-page #photoFrame2 .evidence-photo-plate,
+html.is-single-page #photoFrame3 .evidence-photo-plate {
+  inline-size: 100% !important;
+  block-size: clamp(164px, 55vw, 226px) !important;
+  min-block-size: 164px !important;
+  max-block-size: 226px !important;
+  aspect-ratio: auto !important;
+  flex: none !important;
+  margin: 0 !important;
+}
+
+@supports (width: 1cqi) {
+  html.is-single-page .cover-story-grid .cover-photo-plate {
+    block-size: clamp(188px, 62cqi, 258px) !important;
+  }
+  html.is-single-page #photoFrame2 .evidence-photo-plate,
+  html.is-single-page #photoFrame3 .evidence-photo-plate {
+    block-size: clamp(164px, 57cqi, 226px) !important;
+  }
+}
+
+html.is-single-page .cover-photo-plate img,
+html.is-single-page .evidence-photo-plate img {
+  display: block;
+  inline-size: 100% !important;
+  block-size: 100% !important;
+  max-inline-size: 100%;
+  object-fit: cover !important;
+}
+html.is-single-page .cover-photo-plate img { object-position: 42% 40% !important; }
+html.is-single-page #photoFrame2 .evidence-photo-plate img { object-position: 50% 42% !important; }
+html.is-single-page #photoFrame3 .evidence-photo-plate img { object-position: 43% 45% !important; }
+
+html.is-single-page .photo-caption,
+html.is-single-page .evidence-card .photo-caption {
+  position: static !important;
+  display: block !important;
+  inline-size: 100% !important;
+  min-inline-size: 0;
+  height: auto !important;
+  max-height: none !important;
+  margin: 5px 0 0 !important;
+  overflow: visible !important;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+  box-sizing: border-box;
+}
+
+/* At the narrowest widths, keep media readable even if this means the paper
+   scrolls a little farther. We intentionally do NOT shrink the photographs. */
+@media (max-width: 350px) and (orientation: portrait) {
+  html.is-single-page .sheet { padding-left: 8px; padding-right: 8px; }
+  html.is-single-page .cover-story-grid .cover-photo-plate {
+    min-block-size: 184px !important;
+  }
+  html.is-single-page #photoFrame2 .evidence-photo-plate,
+  html.is-single-page #photoFrame3 .evidence-photo-plate {
+    min-block-size: 160px !important;
+  }
+}
+
+/* Short landscape still uses the same principles: page width decides media
+   size; the side-docked nav and internal paper scroll handle the short axis. */
+@media (orientation: landscape) and (max-height: 520px) {
+  html.is-single-page .card-viewport {
+    --page-h: calc(var(--vvh, 100dvh) - 8px);
+  }
+  html.is-single-page .cover-story-grid .cover-photo-plate,
+  html.is-single-page #photoFrame2 .evidence-photo-plate,
+  html.is-single-page #photoFrame3 .evidence-photo-plate {
+    block-size: clamp(118px, 46cqi, 176px) !important;
+    min-block-size: 118px !important;
+    max-block-size: 176px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.25s !important;
+  }
+  .rain-layer, .film-grain { display: none; }
+  .lightning { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== NOIR BACKGROUND ===================== -->
+<div class="noir-background" aria-hidden="true">
+  <svg class="noir-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="fogFade" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,255,255,0.10)" />
+        <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+      </linearGradient>
+      <linearGradient id="beam" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="rgba(255,244,214,0.85)" />
+        <stop offset="55%" stop-color="rgba(255,240,210,0.28)" />
+        <stop offset="100%" stop-color="rgba(255,240,210,0)" />
+      </linearGradient>
+      <linearGradient id="beam2" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="rgba(210,228,255,0.6)" />
+        <stop offset="100%" stop-color="rgba(210,228,255,0)" />
+      </linearGradient>
+    </defs>
+
+    <!-- searchlight -->
+    <polygon class="searchlight" points="600,0 470,800 730,800" fill="url(#beam)" />
+    <polygon class="searchlight2" points="600,0 520,800 700,800" fill="url(#beam2)" />
+
+    <!-- web in the corner -->
+    <g class="web" opacity="0.9">
+      <path class="web-strand" d="M0 0 C 120 90 220 150 300 250" />
+      <path class="web-strand" d="M0 0 C 90 120 150 220 250 300" />
+      <path class="web-strand" d="M0 0 C 130 130 130 130 300 130" />
+      <path class="web-strand" d="M0 0 C 130 130 130 130 130 300" />
+      <path class="web-strand" d="M0 0 L 320 320" />
+      <path class="web-spiral" d="M40 40 C 120 70 150 110 175 175 C 110 150 70 120 40 40" />
+      <path class="web-spiral" d="M90 90 C 160 120 190 150 215 215 C 150 190 120 160 90 90" />
+      <path class="web-spiral" d="M150 150 C 210 175 230 200 250 250 C 200 230 175 210 150 150" />
+    </g>
+
+    <!-- skyline -->
+    <g class="city-layer">
+      <path d="M-50 800 L-50 590 L20 590 L20 520 L95 520 L95 640 L155 640 L155 470 L230 470 L230 620 L300 620 L300 540 L360 540 L360 655 L430 655 L430 430 L525 430 L525 615 L585 615 L585 505 L650 505 L650 645 L710 645 L710 455 L785 455 L785 600 L850 600 L850 520 L915 520 L915 660 L990 660 L990 445 L1080 445 L1080 610 L1150 610 L1150 530 L1240 530 L1240 800 Z" />
+      <rect class="city-window" x="176" y="500" width="10" height="26" />
+      <rect class="city-window" x="204" y="535" width="10" height="26" />
+      <rect class="city-window" x="456" y="465" width="12" height="28" />
+      <rect class="city-window" x="492" y="515" width="12" height="28" />
+      <rect class="city-window" x="734" y="486" width="10" height="24" />
+      <rect class="city-window" x="760" y="535" width="10" height="24" />
+      <rect class="city-window" x="1017" y="480" width="12" height="28" />
+      <rect class="city-window" x="1048" y="540" width="12" height="28" />
+    </g>
+
+    <!-- the descending swinging spider -->
+    <g class="spider-rig">
+      <g class="spider-swing">
+        <line class="spider-thread" x1="600" y1="0" x2="600" y2="250" />
+        <g class="spider">
+          <!-- legs (left) -->
+          <path class="spider-leg leg-L1" d="M588 262 C 558 250 540 232 526 210" />
+          <path class="spider-leg leg-L2" d="M586 270 C 552 264 528 252 506 236" />
+          <path class="spider-leg leg-L3" d="M586 280 C 550 282 524 292 500 308" />
+          <path class="spider-leg leg-L4" d="M588 288 C 558 298 540 314 524 336" />
+          <!-- legs (right) -->
+          <path class="spider-leg leg-R1" d="M612 262 C 642 250 660 232 674 210" />
+          <path class="spider-leg leg-R2" d="M614 270 C 648 264 672 252 694 236" />
+          <path class="spider-leg leg-R3" d="M614 280 C 650 282 676 292 700 308" />
+          <path class="spider-leg leg-R4" d="M612 288 C 642 298 660 314 676 336" />
+          <!-- body -->
+          <ellipse class="spider-body" cx="600" cy="288" rx="20" ry="26" />
+          <circle class="spider-body" cx="600" cy="258" r="15" />
+          <ellipse class="spider-eye" cx="594" cy="256" rx="3" ry="3.6" />
+          <ellipse class="spider-eye" cx="606" cy="256" rx="3" ry="3.6" />
+        </g>
+      </g>
+    </g>
+
+    <rect x="0" y="0" width="1200" height="800" fill="url(#fogFade)" opacity="0.4" />
+  </svg>
+  <div class="rain-layer"></div>
+  <div class="ambient-glow"></div>
+  <div class="fog"></div>
+  <div class="lightning"></div>
+  <div class="beat-flash"></div>
+</div>
+<div class="film-grain" aria-hidden="true"></div>
+<div class="blinds-shadow" aria-hidden="true"></div>
+<div class="desk-overlay" aria-hidden="true"></div>
+
+<!-- ===================== INTRO TERMINAL ===================== -->
+<section id="intro-terminal" aria-label="Case-file boot screen">
+  <canvas id="static-canvas"></canvas>
+  <div class="crt-scanlines"></div>
+  <div class="breaking-box">
+    <div class="breaking-tag">Breaking News</div>
+    <div class="terminal-headline">RELATIONSHIP STATUS: FINAL EDITION</div>
+    <div class="terminal-sub">Mutual Ending Confirmed // No Villain Found // Good Memories Remain on Record</div>
+    <button class="tune-in-btn" id="startBtn" type="button">Read the Late Edition</button>
+  </div>
+</section>
+
+<!-- ===================== THE FINAL EDITION ===================== -->
+<main class="card-viewport" id="viewport" aria-live="polite">
+  <div class="book-throw" id="bookThrow">
+  <div class="book" id="book" role="application" tabindex="0" aria-label="The Final Edition — a six-page breaking-news farewell. Use arrow keys, swipe, or the buttons to turn pages.">
+
+    <!-- ========== LEAF 0 ========== -->
+    <div class="leaf" data-leaf="0">
+      <!-- PAGE 1 — COVER -->
+      <div class="leaf-face front">
+        <div class="sheet">
+          <header class="masthead">
+            <div class="masthead-top">
+              <span>Vol. I — Final Edition</span>
+              <span>★ Special Late Bulletin ★</span>
+              <span>Price: One Honest Goodbye</span>
+            </div>
+            <h1 class="newspaper-title">The Final Edition</h1>
+            <div class="metadata-bar">
+              <span>Late City Final</span>
+              <span>Filed under: Us, Honestly</span>
+              <span>Forecast: Unknown, Clearing Slowly</span>
+            </div>
+          </header>
+
+          <div class="headline-section">
+            <div class="kicker">⚠ Breaking News · Special Edition</div>
+            <h2 class="headline">We Ended. The Story Didn't Become Fake.</h2>
+            <p class="subhead">Sources confirm a mutual ending. No scandal. No villain. No attempt to rewrite the good parts.</p>
+          </div>
+
+          <div class="story-grid cover-story-grid">
+            <figure class="photo-frame cover-photo" id="photoFrame">
+              <div class="photo-plate cover-photo-plate">
+                <img src="subject-cover.png" alt="A file photograph included in the final edition" width="260" height="195" loading="eager" fetchpriority="high" id="casePhotoA" />
+                <span class="halftone" aria-hidden="true"></span>
+                <span class="photo-vignette" aria-hidden="true"></span>
+              </div>
+              <div class="photo-fallback">FILE PHOTO unavailable — check <b>subject-cover.png</b></div>
+              <figcaption class="photo-caption">FILE PHOTO — The person at the centre of the story, photographed before anyone knew the headline would one day change.</figcaption>
+            </figure>
+
+            <div class="lead-column">
+              <div class="byline">By the Night Desk <span class="tiny-parenthetical">(too close to the story)</span></div>
+              <p class="dropcap">After weeks of missed timing, tired conversations, good memories and one difficult piece of honesty, two people have agreed to stop calling this a relationship.</p>
+              <p>There was no dramatic collapse to report. The headline is smaller than that: we cared, we struggled to show up for each other consistently, and eventually honesty became kinder than prolonging the uncertainty.</p>
+            </div>
+          </div>
+
+          <div class="bottom-strip">
+            <div class="brief">
+              <h4>What's Confirmed</h4>
+              The relationship has ended by mutual agreement. The history has not been deleted with it.
+            </div>
+            <div class="brief">
+              <h4>Editorial Note</h4>
+              An ending can be real without turning everything before it into a mistake.
+            </div>
+          </div>
+          <p class="continued">— Turn the page · the headline needs context —</p>
+          <div class="paper-noise"></div>
+        </div>
+      </div>
+
+      <!-- PAGE 2 — INVESTIGATION -->
+      <div class="leaf-face back">
+        <div class="sheet">
+          <div class="mini-masthead">
+            <div class="mm-title">The Final Edition</div>
+            <div class="mm-line"><span>Page 2</span><span>Live Desk</span><span>What We Know</span></div>
+          </div>
+          <div class="page-fill">
+            <div class="cont-cols investigation-copy">
+              <p><span class="subentry">Continued from front</span>The breakup was not one spectacular incident. It arrived through smaller things: timing, distance, exhaustion, communication that sometimes happened too late, and good intentions that did not always become visible presence.</p>
+              <p><span class="subentry">What Stayed True</span>Care existed. So did the moments that worked: ordinary conversations, small habits, jokes, waiting, noticing, and the fact that two people chose each other for a while.</p>
+              <p><span class="subentry">What Changed</span>Caring quietly was not always the same as communicating clearly. Being busy explains some distance; it does not make the distance disappear.</p>
+              <p><span class="subentry">What This Is Not</span>This is not a case against her, and it is not a defence brief for me. There is no winner to announce and no villain to manufacture for a cleaner headline.</p>
+              <p><span class="subentry">Status</span>The ending is mutual. The future is not being predicted here. The only verified statement is that this chapter closes honestly.</p>
+            </div>
+            <blockquote class="quote-box">
+              “Not every ending is a scandal. Sometimes the most accurate report is simply that two people mattered to each other, and knew when to stop.”
+              <cite>— late desk note, filed without argument</cite>
+            </blockquote>
+          </div>
+          <div class="paper-noise"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== LEAF 1 ========== -->
+    <div class="leaf" data-leaf="1">
+      <!-- PAGE 3 — INDICTMENT -->
+      <div class="leaf-face front">
+        <div class="sheet">
+          <div class="dossier legal-dossier">
+            <div class="dossier-head">
+              <div class="dossier-stamp">Confirmed</div>
+              <div class="dossier-meta">
+                <span>Story No. US-01</span>
+                <span>Status: Final, Not Hostile</span>
+              </div>
+            </div>
+            <h2 class="dossier-title">Joint Statement: No Villain Found</h2>
+            <p class="dossier-sub">A plain-language bulletin on what can actually be said without turning either person into a headline.</p>
+            <hr class="note-rule" />
+
+            <div class="record">
+              <h3 class="record-label">Verified Record</h3>
+              <dl class="record-grid">
+                <dt>Relationship</dt><dd>Real enough to matter; finished enough to name honestly</dd>
+                <dt>Ending</dt><dd>Mutual, without a public trial</dd>
+                <dt>Cause</dt><dd>No single incident; a pattern of timing and presence</dd>
+                <dt>Good parts</dt><dd>Still admissible</dd>
+                <dt>Future</dt><dd>Unconfirmed, and allowed to stay that way</dd>
+              </dl>
+            </div>
+
+            <div class="record">
+              <h3 class="record-label">Five Things the Headline Leaves Out</h3>
+              <ol class="legal-counts">
+                <li><b>I — There was an us.</b><span>Not a perfect one, but a real one. The ending does not retroactively cancel that.</span></li>
+                <li><b>II — Quiet care was not always visible care.</b><span>Thinking of someone is not the same as showing up clearly enough for them to feel it.</span></li>
+                <li><b>III — Timing became part of the story.</b><span>Some conversations arrived after the moment that needed them.</span></li>
+                <li><b>IV — Nobody has to become the bad guy.</b><span>A relationship can stop working without either person becoming a cautionary tale.</span></li>
+                <li><b>V — The future is not part of this report.</b><span>No promises, no predictions, no dramatic final clause. Just respect for what happened.</span></li>
+              </ol>
+            </div>
+
+            <div class="warning-box evidentiary-note">
+              <span class="warning-tag">Editorial Standard</span>
+              No statement in this edition is allowed to invent what the other person secretly felt. The record sticks to what can be said honestly.
+            </div>
+          </div>
+          <div class="paper-noise"></div>
+        </div>
+      </div>
+
+      <!-- PAGE 4 — EVIDENCE ROOM -->
+      <div class="leaf-face back">
+        <div class="sheet evidence-sheet">
+          <div class="mini-masthead">
+            <div class="mm-title">The Photo Desk</div>
+            <div class="mm-line"><span>Page 4</span><span>Archive Desk</span><span>File Photos</span></div>
+          </div>
+          <div class="headline-section evidence-headline">
+            <div class="kicker">⚠ Archive Material</div>
+            <h2 class="headline">A Headline Is Never the Whole Person</h2>
+          </div>
+
+          <div class="evidence-pair">
+            <figure class="photo-frame evidence-card" id="photoFrame2">
+              <div class="photo-plate evidence-photo-plate">
+                <img src="subject-detail.png" alt="A closer archive crop included in the final edition" width="260" height="195" loading="lazy" id="casePhotoB" />
+                <span class="halftone" aria-hidden="true"></span>
+                <span class="photo-vignette" aria-hidden="true"></span>
+              </div>
+              <div class="photo-fallback">ARCHIVE PHOTO unavailable — check <b>subject-detail.png</b></div>
+              <figcaption class="photo-caption"><b>ARCHIVE CROP 01.</b> Breaking news compresses people into one sentence. The person in the frame was never just the ending.</figcaption>
+            </figure>
+
+            <figure class="photo-frame evidence-card evidence-card-dark" id="photoFrame3">
+              <div class="photo-plate evidence-photo-plate">
+                <img src="subject-night.png" alt="A second archive crop included in the final edition" width="260" height="195" loading="lazy" id="casePhotoC" />
+                <span class="halftone" aria-hidden="true"></span>
+                <span class="photo-vignette" aria-hidden="true"></span>
+              </div>
+              <div class="photo-fallback">ARCHIVE PHOTO unavailable — check <b>subject-night.png</b></div>
+              <figcaption class="photo-caption"><b>ARCHIVE CROP 02.</b> Same story, another frame. The headline changed; the history did not become counterfeit.</figcaption>
+            </figure>
+          </div>
+
+          <div class="forensic-findings">
+            <span><b>Finding 01</b> A breakup is one fact, not a complete biography.</span>
+            <span><b>Finding 02</b> Good memories remain true after the status changes.</span>
+            <span><b>Finding 03</b> Respect survives better when nobody is forced into a villain role.</span>
+          </div>
+
+          <blockquote class="quote-box evidence-quote">
+            “File photos are not evidence for or against the ending. They are proof only that a whole person existed outside the headline.”
+            <cite>— archive desk</cite>
+          </blockquote>
+          <div class="paper-noise"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== LEAF 2 ========== -->
+    <div class="leaf" data-leaf="2">
+      <!-- PAGE 5 — EDITORIAL NOTE -->
+      <div class="leaf-face front">
+        <div class="sheet sentencing-sheet">
+          <div class="mini-masthead" style="width:100%;">
+            <div class="mm-title">Editor's Note</div>
+            <div class="mm-line"><span>Page 5</span><span>Personal Column</span><span>Off the Record</span></div>
+          </div>
+
+          <div class="warning-box memo-advisory">
+            <span class="warning-tag">Correction to the Headline</span>
+            Headlines are good at announcing endings and terrible at carrying context. This page is the context.
+          </div>
+
+          <div class="sentencing-copy">
+            <p>The headline is true: we are not together anymore. But a headline has never been good at telling the whole story.</p>
+            <p>There were good parts. There were also times I was thinking of you and still did not make that visible enough. <b>Caring quietly was not always the same as showing up clearly.</b></p>
+            <p>Being busy explains some of the distance; it does not erase it. I could have communicated better. I could have been more present in the moments I did have.</p>
+            <p>I do not want our ending to turn everything before it into a mistake, and I do not want this page to ask you for anything back. I am grateful I knew you. That is enough to print.</p>
+            <p class="memo-closing">Official correction: the story did not fail simply because it ended. It reached an ending, and we were honest enough to name it.</p>
+          </div>
+
+          <p class="note-sign memo-sign">— filed with care, and no reply required</p>
+          <div class="paper-noise"></div>
+        </div>
+      </div>
+
+      <!-- PAGE 6 — FINAL JUDGMENT -->
+      <div class="leaf-face back">
+        <div class="sheet backcover judgment-sheet">
+          <div class="mini-masthead">
+            <div class="mm-title">The Final Edition</div>
+            <div class="mm-line"><span>Back Page</span><span>Final Update</span><span>Late Edition</span></div>
+          </div>
+
+          <div class="judgment-box">
+            <div class="judgment-kicker">Final confirmed update</div>
+            <div class="judgment-word">Closed</div>
+            <div class="judgment-sub">not erased · not rewritten · simply ended</div>
+            <div class="judgment-rule"></div>
+            <p><b>Status:</b> the relationship is over. Respect remains. The good parts remain true. The future is allowed to be unknown.</p>
+          </div>
+
+          <div class="coupon pardon-coupon">
+            <div class="coupon-tag">Correction Notice · Permanent Record</div>
+            <div class="coupon-amt">Ending Does Not Mean Nothing Happened</div>
+            <div class="coupon-fine">No appeal required. No response required. No final performance owed by either person.</div>
+          </div>
+
+          <div class="end-stamp">Edition Closed · Record Intact</div>
+          <div class="colophon">
+            The Final Edition · Breaking News Archive<br />
+            Prepared for one reader · Filed without a request for reply
+          </div>
+          <div class="paper-noise"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="file-tab-prompt" id="fileTab">Open evidence →</div>
+  </div>
+  </div><!-- /book-throw -->
+
+  <nav class="book-nav" id="bookNav" aria-label="Page navigation">
+    <button class="nav-btn" id="prevBtn" type="button" aria-label="Previous page" disabled>‹</button>
+    <span class="nav-dots" id="navDots" aria-hidden="true"></span>
+    <button class="nav-btn" id="nextBtn" type="button" aria-label="Next page">›</button>
+  </nav>
+
+  <button class="sound-toggle" id="soundBtn" type="button" aria-label="Mute soundtrack" aria-pressed="false" title="Mute soundtrack">♪</button>
+</main>
+
+<audio id="noir-theme" src="theme.mp3" preload="auto" loop></audio>
+
+<script>
+(() => {
+  'use strict';
+
+  const intro = document.getElementById('intro-terminal');
+  const viewport = document.getElementById('viewport');
+  const book = document.getElementById('book');
+  const startBtn = document.getElementById('startBtn');
+  const audio = document.getElementById('noir-theme');
+  const canvas = document.getElementById('static-canvas');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const navDots = document.getElementById('navDots');
+  const bookNav = document.getElementById('bookNav');
+  const fileTab = document.getElementById('fileTab');
+  const bookThrow = document.getElementById('bookThrow');
+  const soundBtn = document.getElementById('soundBtn');
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const leaves = Array.from(book.querySelectorAll('.leaf'));
+  const pageSheets = Array.from(book.querySelectorAll('.leaf-face .sheet'));
+  const N = leaves.length;          // number of sheets (3)
+  let current = 0;                  // sheets turned (0..N)
+
+  let introActive = true;
+  let started = false;
+  let noiseFrame = 0;
+  let beatFrame = 0;
+  let audioContext, analyser, frequencyData, sourceNode;
+  let staticSrc, staticGain;
+  let flipLock = 0;
+  let muted = false;
+  audio.volume = 0.58;
+
+  /* ---------- graceful photo fallbacks ---------- */
+  function wireFallback(imgId, frameId) {
+    const img = document.getElementById(imgId);
+    const frame = document.getElementById(frameId);
+    if (!img || !frame) return;
+    img.addEventListener('error', () => frame.classList.add('is-missing'));
+    if (img.complete && img.naturalWidth === 0) frame.classList.add('is-missing');
+  }
+  wireFallback('casePhotoA', 'photoFrame');
+  wireFallback('casePhotoB', 'photoFrame2');
+  wireFallback('casePhotoC', 'photoFrame3');
+
+  /* ---------- CRT static (visual) ---------- */
+  function resizeCanvas() {
+    const scale = window.devicePixelRatio > 1 ? 0.38 : 0.55;
+    canvas.width = Math.max(180, Math.floor(window.innerWidth * scale));
+    canvas.height = Math.max(120, Math.floor(window.innerHeight * scale));
+  }
+  function generateNoise() {
+    if (!introActive) return;
+    const imageData = ctx.createImageData(canvas.width, canvas.height);
+    const buffer = new Uint32Array(imageData.data.buffer);
+    for (let i = 0; i < buffer.length; i += 1) {
+      const shade = Math.random() > 0.52 ? 0x4f : 0x10;
+      buffer[i] = (255 << 24) | (shade << 16) | (shade << 8) | shade;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    noiseFrame = window.requestAnimationFrame(generateNoise);
+  }
+
+  /* ---------- audio: static hiss before entry, theme after ---------- */
+  function ensureCtx() {
+    if (!audioContext && (window.AudioContext || window.webkitAudioContext)) {
+      try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch (e) { audioContext = null; }
+    }
+    return audioContext;
+  }
+  function startStatic() {
+    if (reduceMotion || staticSrc) return;
+    const ac = ensureCtx();
+    if (!ac) return;
+    if (ac.state === 'suspended') ac.resume();
+    const size = Math.floor(ac.sampleRate * 1.5);
+    const buf = ac.createBuffer(1, size, ac.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < size; i += 1) data[i] = (Math.random() * 2 - 1) * 0.6;
+    staticSrc = ac.createBufferSource();
+    staticSrc.buffer = buf;
+    staticSrc.loop = true;
+    const hp = ac.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 1400;
+    staticGain = ac.createGain();
+    staticGain.gain.value = 0;
+    staticSrc.connect(hp); hp.connect(staticGain); staticGain.connect(ac.destination);
+    staticSrc.start();
+    staticGain.gain.linearRampToValueAtTime(0.10, ac.currentTime + 0.5);
+  }
+  function stopStatic() {
+    if (!audioContext) return;
+    const t = audioContext.currentTime;
+    if (staticGain) {
+      staticGain.gain.cancelScheduledValues(t);
+      staticGain.gain.setValueAtTime(staticGain.gain.value, t);
+      staticGain.gain.linearRampToValueAtTime(0, t + 0.5);
+    }
+    if (staticSrc) { try { staticSrc.stop(t + 0.6); } catch (e) {} staticSrc = null; }
+  }
+
+  function setupAudioReactiveBackground() {
+    if (reduceMotion) return;
+    const ac = ensureCtx();
+    if (!ac) return;
+    try {
+      if (!sourceNode) {
+        sourceNode = ac.createMediaElementSource(audio);
+        analyser = ac.createAnalyser();
+        analyser.fftSize = 128;
+        analyser.smoothingTimeConstant = 0.82;
+        sourceNode.connect(analyser);
+        analyser.connect(ac.destination);
+        frequencyData = new Uint8Array(analyser.frequencyBinCount);
+      }
+      if (ac.state === 'suspended') ac.resume();
+      startBeatLoop();
+    } catch (error) {
+      document.documentElement.style.setProperty('--beat', '0.18');
+    }
+  }
+  function startBeatLoop() {
+    if (!analyser || !frequencyData) return;
+    cancelAnimationFrame(beatFrame);
+    const tick = () => {
+      analyser.getByteFrequencyData(frequencyData);
+      const bassBins = Math.min(10, frequencyData.length);
+      let bassTotal = 0;
+      for (let i = 0; i < bassBins; i += 1) bassTotal += frequencyData[i];
+      const beat = Math.min(1, bassTotal / (bassBins * 255));
+      const shaped = Math.max(0.08, Math.pow(beat, 1.35));
+      document.documentElement.style.setProperty('--beat', shaped.toFixed(3));
+      beatFrame = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  /* ---------- flipbook (responsive: spread on desktop, single page on phones) ---------- */
+  // Single-page when narrow OR short (landscape phones)
+  const mq = window.matchMedia('(max-width: 760px), (max-height: 520px)');
+  let singleMode = mq.matches;
+  let maxPos = singleMode ? (2 * N - 1) : N;
+  document.documentElement.classList.toggle('is-single-page', singleMode);
+
+  function buildDots() {
+    navDots.innerHTML = '';
+    const count = singleMode ? (2 * N) : (N + 1);
+    for (let i = 0; i < count; i += 1) navDots.appendChild(document.createElement('i'));
+    dots = Array.from(navDots.children);
+  }
+  let dots = [];
+  buildDots();
+
+  // derive spread-state (sheets turned) + which side to show, from the cursor
+  function viewState() {
+    if (singleMode) {
+      const even = (current % 2 === 0);
+      return { s: even ? current / 2 : (current + 1) / 2, side: even ? 1 : -1, single: true };
+    }
+    return { s: current, side: current === 0 ? 1 : (current === N ? -1 : 0), single: (current === 0 || current === N) };
+  }
+
+  /** Prefer visualViewport so mobile browser chrome doesn't clip the page */
+  function viewportSize() {
+    const vv = window.visualViewport;
+    if (vv && vv.width > 0 && vv.height > 0) {
+      return { vw: vv.width, vh: vv.height };
+    }
+    return { vw: window.innerWidth, vh: window.innerHeight };
+  }
+
+  function syncViewportVars() {
+    const { vw, vh } = viewportSize();
+    // visualViewport tracks the actually visible area on iOS/Android when
+    // browser chrome expands/collapses. Width drives media size; height only
+    // controls the scrollable paper window. This prevents small phones from
+    // shrinking photographs just because less vertical space is available.
+    document.documentElement.style.setProperty('--vvw', vw.toFixed(2) + 'px');
+    document.documentElement.style.setProperty('--vvh', vh.toFixed(2) + 'px');
+  }
+
+  function navReservePx() {
+    // Bottom chrome: nav pill + home indicator breathing room
+    if (!bookNav) return singleMode ? 88 : 68;
+    const h = bookNav.getBoundingClientRect().height || 0;
+    const base = h > 0 ? h + 20 : (singleMode ? 88 : 68);
+    // Extra pad on short/tall phones when CSS var is set
+    const cssNav = parseFloat(getComputedStyle(viewport).getPropertyValue('--nav-space')) || 0;
+    return Math.max(base, cssNav * 0.85, singleMode ? 72 : 56);
+  }
+
+  function fitTransform() {
+    const bookW = book.offsetWidth || 1;
+    const bookH = book.offsetHeight || 1;
+    const pageW = bookW / 2;
+    const { vw, vh } = viewportSize();
+    const reserve = navReservePx();
+    const usableH = Math.max(160, vh - reserve);
+    const v = viewState();
+    let fit, tx;
+    if (v.single) {
+      /*
+        Mobile is laid out at its final CSS-pixel size via --page-w/--page-h.
+        Scaling again here used to make narrow/short phones progressively
+        miniaturise the photographs (and could produce text/image collisions).
+        Keep only the half-book translation; vertical overflow scrolls inside
+        .sheet instead of shrinking the physical page.
+      */
+      const xPct = v.side * -25;
+      return 'translateX(' + xPct + '%) scale(1)';
+    }
+    const widthFit = (vw * 0.96) / bookW;
+    const heightFit = usableH / bookH;
+    fit = Math.max(0.28, Math.min(widthFit, heightFit, 1.06));
+    return 'translateX(0%) scale(' + fit.toFixed(3) + ')';
+  }
+  function applyTransform() {
+    book.style.transformOrigin = 'center center';
+    book.style.transform = fitTransform();
+    document.documentElement.classList.toggle('is-single-page', singleMode);
+  }
+
+  function updateLeaves() {
+    const s = viewState().s;
+    leaves.forEach((leaf, i) => {
+      if (i < s) { leaf.classList.add('turned'); leaf.style.zIndex = String(i + 1); }
+      else { leaf.classList.remove('turned'); leaf.style.zIndex = String(N - i + 1); }
+    });
+  }
+  function updateNav() {
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === maxPos;
+    dots.forEach((d, i) => d.classList.toggle('on', i === current));
+    book.classList.toggle('opened', current > 0);
+  }
+  function render() { updateLeaves(); applyTransform(); updateNav(); }
+
+  function go(dir) {
+    const now = Date.now();
+    if (now - flipLock < 260) return;
+    const target = current + dir;
+    if (target < 0 || target > maxPos) return;
+    const prevS = viewState().s;
+    current = target;
+    flipLock = now;
+    const newS = viewState().s;
+    let leaf = null;
+    if (newS > prevS) leaf = leaves[prevS];
+    else if (newS < prevS) leaf = leaves[newS];
+    if (leaf) {
+      leaf.classList.add('flipping');
+      clearTimeout(leaf._ft);
+      leaf._ft = setTimeout(() => leaf.classList.remove('flipping'), 930);
+    }
+    render();
+    // Each mobile page opens at its own top. This also prevents a previous
+    // page's internal scroll position from making the next page look clipped.
+    if (singleMode && pageSheets[current]) {
+      requestAnimationFrame(() => { pageSheets[current].scrollTop = 0; });
+    }
+  }
+
+  // keep things sane when rotating / crossing the phone breakpoint
+  function handleModeChange() {
+    const nowSingle = mq.matches;
+    if (nowSingle === singleMode) { if (started) applyTransform(); return; }
+    const s = viewState().s;                 // current spread state under old mode
+    singleMode = nowSingle;
+    maxPos = singleMode ? (2 * N - 1) : N;
+    current = singleMode ? Math.min(s * 2, maxPos) : Math.min(s, maxPos);
+    buildDots();
+    if (started) render(); else updateNav();
+  }
+
+  /* ---------- entry ---------- */
+  function initiateSlam() {
+    if (started) return;
+    started = true;
+    startBtn.disabled = true;
+    // we now have a user gesture: let the static hiss play out loud for a beat
+    startStatic();
+    intro.classList.add('tuning');
+    setTimeout(beginShow, 720);
+  }
+  function beginShow() {
+    stopStatic();
+    audio.play().then(setupAudioReactiveBackground).catch(() => {
+      document.documentElement.style.setProperty('--beat', '0.16');
+    });
+    intro.classList.add('is-hidden');
+    viewport.classList.add('is-visible');
+    render();
+    requestAnimationFrame(() => bookThrow.classList.add('thrown'));
+    setTimeout(() => {
+      introActive = false;
+      cancelAnimationFrame(noiseFrame);
+      intro.style.display = 'none';
+    }, 450);
+    // impact lands ~48% through the 1.3s throw
+    setTimeout(() => {
+      viewport.classList.add('screen-shake');
+      setTimeout(() => viewport.classList.remove('screen-shake'), 440);
+    }, 640);
+    setTimeout(() => {
+      bookNav.classList.add('is-visible');
+      soundBtn.classList.add('is-visible');
+    }, 1450);
+  }
+
+  /* ---------- input ---------- */
+  let suppressClickUntil = 0;
+  function onBookClick(e) {
+    if (!started || Date.now() < suppressClickUntil) return;
+    go(e.clientX > window.innerWidth / 2 ? 1 : -1);
+  }
+  function onKey(e) {
+    if (!started) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+  }
+  let touchX = null;
+  let touchY = null;
+  book.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].clientX;
+    touchY = e.changedTouches[0].clientY;
+  }, { passive: true });
+  book.addEventListener('touchend', (e) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    const dy = e.changedTouches[0].clientY - (touchY || 0);
+    const travelled = Math.hypot(dx, dy);
+    // Any real drag belongs to scrolling/swiping, not the subsequent click.
+    if (travelled > 10) suppressClickUntil = Date.now() + 450;
+    // horizontal swipe only — ignore vertical page scrolling/bounces
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      go(dx < 0 ? 1 : -1);
+    }
+    touchX = null;
+    touchY = null;
+  }, { passive: true });
+
+  function handleVisibilityChange() {
+    if (document.hidden) { cancelAnimationFrame(beatFrame); return; }
+    if (started && analyser && frequencyData) startBeatLoop();
+  }
+
+  // start the static the instant the visitor touches anything on the intro
+  ['pointerdown', 'keydown', 'touchstart'].forEach((evt) =>
+    intro.addEventListener(evt, startStatic, { once: true, passive: true }));
+
+  function onViewportChange() {
+    syncViewportVars();
+    resizeCanvas();
+    handleModeChange();
+    if (started) applyTransform();
+  }
+
+  window.addEventListener('resize', onViewportChange, { passive: true });
+  if (mq.addEventListener) mq.addEventListener('change', handleModeChange);
+  else if (mq.addListener) mq.addListener(handleModeChange);
+  window.addEventListener('orientationchange', () => setTimeout(onViewportChange, 160), { passive: true });
+  // Mobile browser URL bar show/hide changes visualViewport without a window resize on some devices
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', onViewportChange, { passive: true });
+    window.visualViewport.addEventListener('scroll', () => { if (started) applyTransform(); }, { passive: true });
+  }
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  startBtn.addEventListener('click', initiateSlam);
+  book.addEventListener('click', onBookClick);
+  document.addEventListener('keydown', onKey);
+  prevBtn.addEventListener('click', (e) => { e.stopPropagation(); go(-1); });
+  nextBtn.addEventListener('click', (e) => { e.stopPropagation(); go(1); });
+  soundBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    muted = !muted;
+    audio.muted = muted;
+    soundBtn.setAttribute('aria-pressed', String(muted));
+    soundBtn.setAttribute('aria-label', muted ? 'Unmute soundtrack' : 'Mute soundtrack');
+    soundBtn.title = muted ? 'Unmute soundtrack' : 'Mute soundtrack';
+    soundBtn.textContent = muted ? '×' : '♪';
+    if (muted) document.documentElement.style.setProperty('--beat', '0.08');
+    else if (started && analyser && frequencyData) startBeatLoop();
+  });
+  // Prevent double-firing: button click + bubble to book
+  prevBtn.addEventListener('touchend', (e) => { e.stopPropagation(); }, { passive: true });
+  nextBtn.addEventListener('touchend', (e) => { e.stopPropagation(); }, { passive: true });
+
+  syncViewportVars();
+  resizeCanvas();
+  generateNoise();
+})();
+</script>
+</body>
+</html>
